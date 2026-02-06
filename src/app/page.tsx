@@ -6,9 +6,8 @@ export default function Home() {
   const [noCount, setNoCount] = useState(0);
   const [yesPressed, setYesPressed] = useState(false);
   
-  // This calculates the size of the Yes button
-  // Base size is 1. Every click adds 30% (0.3) growth.
-  const yesButtonSize = noCount * 20 + 16; 
+  // LOGIC: Start at scale 1. Every "No" click adds 0.3 (30%) to the size.
+  const yesButtonScale = 1 + (noCount * 0.3);
 
   function handleNoClick() {
     setNoCount(noCount + 1);
@@ -16,7 +15,6 @@ export default function Home() {
 
   function handleYesClick() {
     setYesPressed(true);
-    // Trigger the confetti explosion
     confetti({
       particleCount: 150,
       spread: 70,
@@ -26,14 +24,14 @@ export default function Home() {
   }
 
   // ---------------------------------------------------------
-  // VIEW 1: SHE SAID YES! (The Success Screen)
+  // VIEW 1: SUCCESS SCREEN
   // ---------------------------------------------------------
   if (yesPressed) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-red-100 to-pink-300 p-8 text-center animate-in fade-in zoom-in duration-500">
+      <main className="flex min-h-screen flex-col items-center justify-center bg-linear-to-br from-pink-200 via-red-100 to-pink-300 p-8 text-center animate-in fade-in zoom-in duration-500">
         
-        {/* Cute Header */}
-        <h1 className="text-6xl font-bold text-red-600 mb-4 drop-shadow-sm">
+        {/* Updated Header with Gradient Text */}
+        <h1 className="text-6xl font-bold mb-4 drop-shadow-sm text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-800">
           Yeeeeeeyy!!! 💖
         </h1>
         
@@ -44,10 +42,10 @@ export default function Home() {
         {/* The Letter Card */}
         <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl max-w-lg border-2 border-pink-200">
           <p className="text-gray-700 text-lg leading-relaxed text-left font-medium">
-            Dear <strong>Ashley Jane Silva My Baby</strong>,
+            Dear <strong>Ashley Silva My Baby</strong>,
             <br /><br />
             This is our 2nd valentine&apos;s na baby and I&apos;m so glad na we&apos;re still going strong japun hehe. 
-            I hope this would be a good year and I really want to be with you najud :( 
+            I hope this would be a good year and I really want to be with you najud
             Pero 3 months nalang man sad so laban HAHAHAHA. 
             <br /><br />
             I love you so much my cutie baby, my sweetie pie honey bunch sugarplum humpty humpty dum {'>'}-{'<'}
@@ -63,30 +61,27 @@ export default function Home() {
   }
 
   // ---------------------------------------------------------
-  // VIEW 2: THE PROPOSAL (Question Screen)
+  // VIEW 2: PROPOSAL SCREEN
   // ---------------------------------------------------------
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-pink-100 p-4 overflow-hidden relative">
       
-      {/* Optional: Add a cute GIF here if you want! */}
-      {/* <img src="https://media.tenor.com/..." className="h-[200px]" /> */}
-
-      <h1 className="text-4xl md:text-6xl font-bold text-pink-600 mb-8 text-center drop-shadow-md">
+      <h1 className="text-4xl md:text-6xl font-bold text-pink-600 mb-12 text-center drop-shadow-md">
         Will you be my Valentine? 🌹
       </h1>
 
       <div className="flex flex-col md:flex-row items-center justify-center gap-8">
         
-        {/* The YES Button (Grows on every No click) */}
+        {/* YES BUTTON: Now uses 'scale' to grow smoothly */}
         <button
-          className="rounded bg-green-500 font-bold text-white hover:bg-green-600 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
-          style={{ fontSize: yesButtonSize }}
           onClick={handleYesClick}
+          className="rounded bg-green-500 px-8 py-4 font-bold text-white hover:bg-green-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+          style={{ transform: `scale(${yesButtonScale})` }}
         >
           YES
         </button>
 
-        {/* The NO Button (Runs away logic implied by growing Yes button) */}
+        {/* NO BUTTON: Same initial size (px-8 py-4) */}
         <button
           onClick={handleNoClick}
           className="rounded bg-red-500 px-8 py-4 font-bold text-white hover:bg-red-600 transition-all duration-300 shadow-lg"
