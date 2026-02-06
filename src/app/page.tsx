@@ -114,8 +114,8 @@ export default function Home() {
               <div className="mt-8 pt-6 border-t border-pink-100 text-left">
                 <p className="font-bold text-pink-500">From the love of your life</p>
                 
-                {/* UPDATED: Added animate-pulse to match the header, used Sky/Blue/Cyan gradient */}
-                <p className="italic font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-blue-500 to-cyan-400 animate-pulse">
+                {/* UPDATED: Replaced animate-pulse with animate-shine and added bg size */}
+                <p className="italic font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-blue-500 to-cyan-400 animate-shine bg-[length:200%_auto]">
                   - Remor Silva Jr (Your Baby)
                 </p>
               </div>
