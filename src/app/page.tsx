@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 
-// Define the shape of our Heart object
 interface Heart {
   id: number;
   left: number;
@@ -11,16 +10,28 @@ interface Heart {
   duration: number;
 }
 
+// Define specific types for the position state so TypeScript is happy
+interface ButtonPosition {
+  top: string;
+  left: string;
+  position: "absolute" | "static"; // restricting this to only valid CSS values
+}
+
 export default function Home() {
   const [noCount, setNoCount] = useState(0);
   const [yesPressed, setYesPressed] = useState(false);
   const [hearts, setHearts] = useState<Heart[]>([]);
+  
+  // Initialize with proper types
+  const [noPos, setNoPos] = useState<ButtonPosition>({ 
+    top: "auto", 
+    left: "auto", 
+    position: "static" 
+  });
 
-  // FIXED: We wrap the logic in a timeout. 
-  // This pushes the update to the "next tick", preventing the synchronous error.
   useEffect(() => {
     const timer = setTimeout(() => {
-      const newHearts = Array.from({ length: 15 }).map((_, i) => ({
+      const newHearts = Array.from({ length: 20 }).map((_, i) => ({
         id: i,
         left: Math.random() * 100,
         delay: Math.random() * 5,
@@ -28,15 +39,24 @@ export default function Home() {
         duration: Math.random() * 3 + 2,
       }));
       setHearts(newHearts);
-    }, 100); // 100ms delay is enough to solve the error
-
+    }, 100);
     return () => clearTimeout(timer);
-  }, []); 
+  }, []);
 
   const yesButtonScale = 1 + (noCount * 0.3);
 
   function handleNoClick() {
     setNoCount(noCount + 1);
+    
+    // Calculate random position within the window
+    const randomTop = Math.random() * (window.innerHeight - 100);
+    const randomLeft = Math.random() * (window.innerWidth - 100);
+
+    setNoPos({
+      top: `${randomTop}px`,
+      left: `${randomLeft}px`,
+      position: "absolute" // This is now guaranteed to be a valid value
+    });
   }
 
   function handleYesClick() {
@@ -50,13 +70,12 @@ export default function Home() {
   }
 
   // ---------------------------------------------------------
-  // VIEW 1: SHE SAID YES!
+  // VIEW 1: SUCCESS
   // ---------------------------------------------------------
   if (yesPressed) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-linear-to-br from-pink-200 via-red-100 to-pink-300 p-8 text-center animate-in fade-in zoom-in duration-500 relative overflow-hidden">
         
-        {/* Floating Hearts Background */}
         {hearts.map((heart) => (
            <div
              key={heart.id}
@@ -100,12 +119,11 @@ export default function Home() {
   }
 
   // ---------------------------------------------------------
-  // VIEW 2: THE PROPOSAL
+  // VIEW 2: PROPOSAL
   // ---------------------------------------------------------
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-pink-100 p-4 overflow-hidden relative">
       
-      {/* Floating Hearts Background */}
       {hearts.map((heart) => (
          <div
            key={heart.id}
@@ -128,7 +146,7 @@ export default function Home() {
         <span className="text-red-500"> 🌹</span>
       </h1>
 
-      <div className="flex flex-col md:flex-row items-center justify-center gap-8 z-10">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-8 z-10 w-full relative min-h-[100px]">
         
         {/* YES BUTTON */}
         <button
@@ -143,7 +161,12 @@ export default function Home() {
         {/* NO BUTTON */}
         <button
           onClick={handleNoClick}
-          className="rounded bg-red-500 px-8 py-4 font-bold text-white hover:bg-red-600 transition-all duration-300 shadow-lg"
+          style={{ 
+            position: noPos.position, 
+            top: noPos.top, 
+            left: noPos.left 
+          }}
+          className="rounded bg-red-500 px-8 py-4 font-bold text-white hover:bg-red-600 transition-all duration-100 shadow-lg whitespace-nowrap"
         >
           {noCount === 0 ? "No" : "Are you sure? 😢"}
         </button>
