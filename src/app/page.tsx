@@ -90,10 +90,6 @@ export default function Home() {
 
         {/* 3D FLIP CONTAINER */}
         <div 
-          // UPDATED:
-          // 1. Added hover:scale-105 for that pop effect.
-          // 2. Added logic to 'onClick' so it only flips IF it's not already flipped.
-          // 3. Changed cursor: pointer shows on front, default on back.
           className={`relative w-full max-w-lg [perspective:1000px] z-10 transition-transform duration-300 hover:scale-105 ${!isFlipped ? 'cursor-pointer' : ''}`} 
           onClick={() => {
             if (!isFlipped) setIsFlipped(true);
@@ -117,18 +113,21 @@ export default function Home() {
               
               <div className="mt-8 pt-6 border-t border-pink-100 text-left">
                 <p className="font-bold text-pink-500">From the love of your life</p>
-                <p className="text-gray-500">- Remor Silva Jr (Your Baby)</p>
-                <p className="text-xs text-pink-300 mt-4 italic text-center">(Click card to see more)</p>
+                
+                {/* UPDATED SIGNATURE: Italic + Blue Gradient */}
+                <p className="italic font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">
+                  - Remor Silva Jr (Your Baby)
+                </p>
               </div>
             </div>
 
             {/* BACK FACE (Reset Option) */}
             <div className="absolute inset-0 h-full w-full bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border-2 border-pink-200 [transform:rotateY(180deg)] [backface-visibility:hidden] flex flex-col items-center justify-center">
               
-              {/* Return Icon (Top Left) - This is now the ONLY way to flip back */}
+              {/* Return Icon */}
               <button 
                 onClick={(e) => {
-                  e.stopPropagation(); // Stops the click from bubbling up (though the container click is disabled for back anyway)
+                  e.stopPropagation(); 
                   setIsFlipped(false);
                 }}
                 className="absolute top-4 left-4 p-2 text-pink-500 hover:text-pink-700 hover:bg-pink-100 rounded-full transition-colors z-20"
