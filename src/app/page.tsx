@@ -1,12 +1,38 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
+
+// Define the shape of our Heart object
+interface Heart {
+  id: number;
+  left: number;
+  delay: number;
+  size: number;
+  duration: number;
+}
 
 export default function Home() {
   const [noCount, setNoCount] = useState(0);
   const [yesPressed, setYesPressed] = useState(false);
-  
-  // LOGIC: Start at scale 1. Every "No" click adds 0.3 (30%) to the size.
+  const [hearts, setHearts] = useState<Heart[]>([]);
+
+  // FIXED: We wrap the logic in a timeout. 
+  // This pushes the update to the "next tick", preventing the synchronous error.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const newHearts = Array.from({ length: 15 }).map((_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 5,
+        size: Math.random() * 20 + 20,
+        duration: Math.random() * 3 + 2,
+      }));
+      setHearts(newHearts);
+    }, 100); // 100ms delay is enough to solve the error
+
+    return () => clearTimeout(timer);
+  }, []); 
+
   const yesButtonScale = 1 + (noCount * 0.3);
 
   function handleNoClick() {
@@ -24,28 +50,41 @@ export default function Home() {
   }
 
   // ---------------------------------------------------------
-  // VIEW 1: SUCCESS SCREEN
+  // VIEW 1: SHE SAID YES!
   // ---------------------------------------------------------
   if (yesPressed) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-linear-to-br from-pink-200 via-red-100 to-pink-300 p-8 text-center animate-in fade-in zoom-in duration-500">
+      <main className="flex min-h-screen flex-col items-center justify-center bg-linear-to-br from-pink-200 via-red-100 to-pink-300 p-8 text-center animate-in fade-in zoom-in duration-500 relative overflow-hidden">
         
-        {/* Updated Header with Gradient Text */}
-        <h1 className="text-6xl font-bold mb-4 drop-shadow-sm text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-800">
+        {/* Floating Hearts Background */}
+        {hearts.map((heart) => (
+           <div
+             key={heart.id}
+             className="absolute bottom-0 text-pink-300 opacity-30 animate-pulse"
+             style={{
+               left: `${heart.left}%`,
+               animationDelay: `${heart.delay}s`,
+               fontSize: `${heart.size}px`
+             }}
+           >
+             ❤️
+           </div>
+        ))}
+
+        <h1 className="text-6xl font-bold mb-4 drop-shadow-sm text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-600 to-red-500 animate-pulse">
           Yeeeeeeyy!!! 💖
         </h1>
         
-        <h2 className="text-2xl font-semibold text-pink-600 mb-8">
+        <h2 className="text-2xl font-semibold text-pink-600 mb-8 z-10">
           Thank you, babyyyy. I love you so muchhh :3
         </h2>
 
-        {/* The Letter Card */}
-        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl max-w-lg border-2 border-pink-200">
+        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-lg border-2 border-pink-200 z-10 transform hover:scale-105 transition-transform duration-300">
           <p className="text-gray-700 text-lg leading-relaxed text-left font-medium">
             Dear <strong>Ashley Silva My Baby</strong>,
             <br /><br />
-            This is our 2nd valentine&apos;s na baby and I&apos;m so glad na we&apos;re still going strong japun hehe. 
-            I hope this would be a good year and I really want to be with you najud
+            This is our 2nd Valentine&apos;s na baby and I&apos;m so glad na we&apos;re still going strong japun hehe. 
+            I hope this would be a good year and I really want to be with you najud :( 
             Pero 3 months nalang man sad so laban HAHAHAHA. 
             <br /><br />
             I love you so much my cutie baby, my sweetie pie honey bunch sugarplum humpty humpty dum {'>'}-{'<'}
@@ -61,27 +100,47 @@ export default function Home() {
   }
 
   // ---------------------------------------------------------
-  // VIEW 2: PROPOSAL SCREEN
+  // VIEW 2: THE PROPOSAL
   // ---------------------------------------------------------
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-pink-100 p-4 overflow-hidden relative">
       
-      <h1 className="text-4xl md:text-6xl font-bold text-pink-600 mb-12 text-center drop-shadow-md">
-        Will you be my Valentine? 🌹
+      {/* Floating Hearts Background */}
+      {hearts.map((heart) => (
+         <div
+           key={heart.id}
+           className="absolute bottom-0 text-pink-400 opacity-20 animate-bounce"
+           style={{
+             left: `${heart.left}%`,
+             animationDuration: `${heart.duration}s`,
+             fontSize: `${heart.size}px`,
+             animationDelay: `${heart.delay}s`
+           }}
+         >
+           ❤️
+         </div>
+      ))}
+
+      <h1 className="text-4xl md:text-6xl font-extrabold mb-12 text-center drop-shadow-lg animate-pulse tracking-wide leading-tight z-10">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-pink-500">
+          Will you be my Valentine?
+        </span> 
+        <span className="text-red-500"> 🌹</span>
       </h1>
 
-      <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-8 z-10">
         
-        {/* YES BUTTON: Now uses 'scale' to grow smoothly */}
+        {/* YES BUTTON */}
         <button
           onClick={handleYesClick}
-          className="rounded bg-green-500 px-8 py-4 font-bold text-white hover:bg-green-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+          className="relative rounded bg-green-500 px-8 py-4 font-bold text-white hover:bg-green-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:ring-4 ring-green-300 ring-offset-2"
           style={{ transform: `scale(${yesButtonScale})` }}
         >
           YES
+          <span className="absolute top-0 left-0 w-full h-full bg-white opacity-20 rounded animate-pulse"></span>
         </button>
 
-        {/* NO BUTTON: Same initial size (px-8 py-4) */}
+        {/* NO BUTTON */}
         <button
           onClick={handleNoClick}
           className="rounded bg-red-500 px-8 py-4 font-bold text-white hover:bg-red-600 transition-all duration-300 shadow-lg"
