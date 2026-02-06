@@ -71,12 +71,15 @@ export default function Home() {
            </div>
         ))}
 
-        {/* Added 'py-4' to prevent the bottom of the 'y' from being cut off */}
-        <h1 className="text-6xl font-bold mb-4 drop-shadow-sm text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-600 to-red-500 animate-pulse py-4">
-          Yeeeeeeyy!!! 💖
+        {/* FIXED: We separated the text and the emoji. 
+            The text gets the gradient, the emoji stays normal. */}
+        <h1 className="text-6xl font-bold mb-4 drop-shadow-sm animate-pulse py-4">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-600 to-red-500">
+            Yeeeeeeyy!!!
+          </span>
+          <span> 💖</span> 
         </h1>
         
-        {/* Reverted to original size (text-2xl) but kept the gradient + added padding */}
         <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-red-500 to-purple-500 mb-8 z-10 drop-shadow-sm py-2">
           Thank you, babyyyy. I love you so muchhh :3
         </h2>
