@@ -15,7 +15,7 @@ export default function Home() {
   const [yesPressed, setYesPressed] = useState(false);
   const [hearts, setHearts] = useState<Heart[]>([]);
   
-  // NEW: Track the exact scale of the Yes button in state
+  // Track the exact scale of the Yes button
   const [yesScale, setYesScale] = useState(1);
 
   useEffect(() => {
@@ -35,11 +35,8 @@ export default function Home() {
   function handleNoClick() {
     setNoCount(noCount + 1);
     
-    // 1. INCREASE GROWTH RATE DYNAMICALLY
-    // Start at 30% growth (0.3), add 5% (0.05) per click
+    // Growth logic: Start at 30% growth, add 5% per click
     const growthRate = 0.30 + (noCount * 0.05);
-    
-    // 2. APPLY THE NEW SCALE
     setYesScale(prevScale => prevScale + growthRate);
   }
 
@@ -53,11 +50,7 @@ export default function Home() {
     });
   }
 
-  // MOVEMENT LOGIC:
-  // The Yes button expands from the center.
-  // If it grows by scale X, its right edge moves by roughly (Scale - 1) * (Half Width).
-  // We estimate the button's half-width is about 75px. 
-  // We multiply by slightly more (80px) to keep a clean gap.
+  // The Offset Math for the No button
   const noButtonOffset = (yesScale - 1) * 80;
 
   // ---------------------------------------------------------
@@ -85,8 +78,9 @@ export default function Home() {
           Yeeeeeeyy!!! 💖
         </h1>
         
-        <h2 className="text-2xl font-semibold text-pink-600 mb-8 z-10">
-          Thank you, babyyyy. I love you so muchhh :3
+        {/* UPDATED: Bigger, bolder, gradient text with a drop shadow */}
+        <h2 className="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-red-500 to-purple-500 mb-8 z-10 drop-shadow-lg tracking-wide">
+          Thank you, babyyyy. <br className="md:hidden" /> I love you so muchhh :3
         </h2>
 
         <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-lg border-2 border-pink-200 z-10 transform hover:scale-105 transition-transform duration-300">
@@ -137,7 +131,6 @@ export default function Home() {
         <span className="text-red-500"> 🌹</span>
       </h1>
 
-      {/* Button Container */}
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 z-10 w-full relative min-h-[100px]">
         
         {/* YES BUTTON */}
@@ -150,7 +143,7 @@ export default function Home() {
           <span className="absolute top-0 left-0 w-full h-full bg-white opacity-20 rounded animate-pulse"></span>
         </button>
 
-        {/* NO BUTTON - Moves based on the scale of the Yes button */}
+        {/* NO BUTTON */}
         <button
           onClick={handleNoClick}
           className="rounded bg-red-500 px-8 py-4 font-bold text-white hover:bg-red-600 transition-all duration-300 shadow-lg whitespace-nowrap z-10"
