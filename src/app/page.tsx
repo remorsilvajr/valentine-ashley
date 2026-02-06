@@ -10,24 +10,10 @@ interface Heart {
   duration: number;
 }
 
-// Define specific types for the position state so TypeScript is happy
-interface ButtonPosition {
-  top: string;
-  left: string;
-  position: "absolute" | "static"; // restricting this to only valid CSS values
-}
-
 export default function Home() {
   const [noCount, setNoCount] = useState(0);
   const [yesPressed, setYesPressed] = useState(false);
   const [hearts, setHearts] = useState<Heart[]>([]);
-  
-  // Initialize with proper types
-  const [noPos, setNoPos] = useState<ButtonPosition>({ 
-    top: "auto", 
-    left: "auto", 
-    position: "static" 
-  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -44,19 +30,13 @@ export default function Home() {
   }, []);
 
   const yesButtonScale = 1 + (noCount * 0.3);
+  
+  // LOGIC: Move the No button 50px to the right for every click
+  // This gives it "running away" energy without teleporting
+  const noButtonOffset = noCount * 50; 
 
   function handleNoClick() {
     setNoCount(noCount + 1);
-    
-    // Calculate random position within the window
-    const randomTop = Math.random() * (window.innerHeight - 100);
-    const randomLeft = Math.random() * (window.innerWidth - 100);
-
-    setNoPos({
-      top: `${randomTop}px`,
-      left: `${randomLeft}px`,
-      position: "absolute" // This is now guaranteed to be a valid value
-    });
   }
 
   function handleYesClick() {
@@ -148,25 +128,21 @@ export default function Home() {
 
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 z-10 w-full relative min-h-[100px]">
         
-        {/* YES BUTTON */}
+        {/* YES BUTTON - High Z-Index ensures it eventually covers the No button */}
         <button
           onClick={handleYesClick}
-          className="relative rounded bg-green-500 px-8 py-4 font-bold text-white hover:bg-green-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:ring-4 ring-green-300 ring-offset-2"
+          className="relative z-50 rounded bg-green-500 px-8 py-4 font-bold text-white hover:bg-green-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:ring-4 ring-green-300 ring-offset-2"
           style={{ transform: `scale(${yesButtonScale})` }}
         >
           YES
           <span className="absolute top-0 left-0 w-full h-full bg-white opacity-20 rounded animate-pulse"></span>
         </button>
 
-        {/* NO BUTTON */}
+        {/* NO BUTTON - Moves to the right (translateX) based on clicks */}
         <button
           onClick={handleNoClick}
-          style={{ 
-            position: noPos.position, 
-            top: noPos.top, 
-            left: noPos.left 
-          }}
-          className="rounded bg-red-500 px-8 py-4 font-bold text-white hover:bg-red-600 transition-all duration-100 shadow-lg whitespace-nowrap"
+          className="rounded bg-red-500 px-8 py-4 font-bold text-white hover:bg-red-600 transition-all duration-300 shadow-lg whitespace-nowrap z-10"
+          style={{ transform: `translateX(${noButtonOffset}px)` }}
         >
           {noCount === 0 ? "No" : "Are you sure? 😢"}
         </button>
