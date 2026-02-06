@@ -14,6 +14,9 @@ export default function Home() {
   const [noCount, setNoCount] = useState(0);
   const [yesPressed, setYesPressed] = useState(false);
   const [hearts, setHearts] = useState<Heart[]>([]);
+  
+  // NEW: Track the exact scale of the Yes button in state
+  const [yesScale, setYesScale] = useState(1);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,14 +32,15 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
-  const yesButtonScale = 1 + (noCount * 0.3);
-  
-  // LOGIC: Move the No button 50px to the right for every click
-  // This gives it "running away" energy without teleporting
-  const noButtonOffset = noCount * 50; 
-
   function handleNoClick() {
     setNoCount(noCount + 1);
+    
+    // 1. INCREASE GROWTH RATE DYNAMICALLY
+    // Start at 30% growth (0.3), add 5% (0.05) per click
+    const growthRate = 0.30 + (noCount * 0.05);
+    
+    // 2. APPLY THE NEW SCALE
+    setYesScale(prevScale => prevScale + growthRate);
   }
 
   function handleYesClick() {
@@ -48,6 +52,13 @@ export default function Home() {
       colors: ['#ff69b4', '#ff1493', '#ff0000']
     });
   }
+
+  // MOVEMENT LOGIC:
+  // The Yes button expands from the center.
+  // If it grows by scale X, its right edge moves by roughly (Scale - 1) * (Half Width).
+  // We estimate the button's half-width is about 75px. 
+  // We multiply by slightly more (80px) to keep a clean gap.
+  const noButtonOffset = (yesScale - 1) * 80;
 
   // ---------------------------------------------------------
   // VIEW 1: SUCCESS
@@ -126,19 +137,20 @@ export default function Home() {
         <span className="text-red-500"> 🌹</span>
       </h1>
 
+      {/* Button Container */}
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 z-10 w-full relative min-h-[100px]">
         
-        {/* YES BUTTON - High Z-Index ensures it eventually covers the No button */}
+        {/* YES BUTTON */}
         <button
           onClick={handleYesClick}
           className="relative z-50 rounded bg-green-500 px-8 py-4 font-bold text-white hover:bg-green-600 transition-all duration-300 shadow-xl hover:shadow-2xl hover:ring-4 ring-green-300 ring-offset-2"
-          style={{ transform: `scale(${yesButtonScale})` }}
+          style={{ transform: `scale(${yesScale})` }}
         >
           YES
           <span className="absolute top-0 left-0 w-full h-full bg-white opacity-20 rounded animate-pulse"></span>
         </button>
 
-        {/* NO BUTTON - Moves to the right (translateX) based on clicks */}
+        {/* NO BUTTON - Moves based on the scale of the Yes button */}
         <button
           onClick={handleNoClick}
           className="rounded bg-red-500 px-8 py-4 font-bold text-white hover:bg-red-600 transition-all duration-300 shadow-lg whitespace-nowrap z-10"
