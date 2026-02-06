@@ -34,8 +34,6 @@ export default function Home() {
 
   function handleNoClick() {
     setNoCount(noCount + 1);
-    
-    // Growth logic: Start at 30% growth, add 5% per click
     const growthRate = 0.30 + (noCount * 0.05);
     setYesScale(prevScale => prevScale + growthRate);
   }
@@ -50,7 +48,6 @@ export default function Home() {
     });
   }
 
-  // The Offset Math for the No button
   const noButtonOffset = (yesScale - 1) * 80;
 
   // ---------------------------------------------------------
@@ -74,13 +71,14 @@ export default function Home() {
            </div>
         ))}
 
-        <h1 className="text-6xl font-bold mb-4 drop-shadow-sm text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-600 to-red-500 animate-pulse">
+        {/* Added 'py-4' to prevent the bottom of the 'y' from being cut off */}
+        <h1 className="text-6xl font-bold mb-4 drop-shadow-sm text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-600 to-red-500 animate-pulse py-4">
           Yeeeeeeyy!!! 💖
         </h1>
         
-        {/* UPDATED: Bigger, bolder, gradient text with a drop shadow */}
-        <h2 className="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-red-500 to-purple-500 mb-8 z-10 drop-shadow-lg tracking-wide">
-          Thank you, babyyyy. <br className="md:hidden" /> I love you so muchhh :3
+        {/* Reverted to original size (text-2xl) but kept the gradient + added padding */}
+        <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-red-500 to-purple-500 mb-8 z-10 drop-shadow-sm py-2">
+          Thank you, babyyyy. I love you so muchhh :3
         </h2>
 
         <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-lg border-2 border-pink-200 z-10 transform hover:scale-105 transition-transform duration-300">
