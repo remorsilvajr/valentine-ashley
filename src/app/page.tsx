@@ -15,8 +15,6 @@ export default function Home() {
   const [yesPressed, setYesPressed] = useState(false);
   const [hearts, setHearts] = useState<Heart[]>([]);
   const [yesScale, setYesScale] = useState(1);
-  
-  // NEW: Track if the card is flipped
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
@@ -49,7 +47,6 @@ export default function Home() {
     });
   }
 
-  // NEW: Reset everything to start over
   function handleReset() {
     setIsFlipped(false);
     setYesPressed(false);
@@ -92,7 +89,16 @@ export default function Home() {
         </h2>
 
         {/* 3D FLIP CONTAINER */}
-        <div className="relative w-full max-w-lg cursor-pointer [perspective:1000px] z-10" onClick={() => setIsFlipped(!isFlipped)}>
+        <div 
+          // UPDATED:
+          // 1. Added hover:scale-105 for that pop effect.
+          // 2. Added logic to 'onClick' so it only flips IF it's not already flipped.
+          // 3. Changed cursor: pointer shows on front, default on back.
+          className={`relative w-full max-w-lg [perspective:1000px] z-10 transition-transform duration-300 hover:scale-105 ${!isFlipped ? 'cursor-pointer' : ''}`} 
+          onClick={() => {
+            if (!isFlipped) setIsFlipped(true);
+          }}
+        >
           
           {/* FLIPPER */}
           <div className={`relative w-full h-full transition-all duration-700 [transform-style:preserve-3d] ${isFlipped ? "[transform:rotateY(180deg)]" : ""}`}>
@@ -112,20 +118,20 @@ export default function Home() {
               <div className="mt-8 pt-6 border-t border-pink-100 text-left">
                 <p className="font-bold text-pink-500">From the love of your life</p>
                 <p className="text-gray-500">- Remor Silva Jr (Your Baby)</p>
-                <p className="text-xs text-pink-300 mt-4 italic text-center">(Click card to flip)</p>
+                <p className="text-xs text-pink-300 mt-4 italic text-center">(Click card to see more)</p>
               </div>
             </div>
 
             {/* BACK FACE (Reset Option) */}
             <div className="absolute inset-0 h-full w-full bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border-2 border-pink-200 [transform:rotateY(180deg)] [backface-visibility:hidden] flex flex-col items-center justify-center">
               
-              {/* Return Icon (Top Left) */}
+              {/* Return Icon (Top Left) - This is now the ONLY way to flip back */}
               <button 
                 onClick={(e) => {
-                  e.stopPropagation(); // Stop the card from flipping back when clicking the icon
+                  e.stopPropagation(); // Stops the click from bubbling up (though the container click is disabled for back anyway)
                   setIsFlipped(false);
                 }}
-                className="absolute top-4 left-4 p-2 text-pink-500 hover:text-pink-700 hover:bg-pink-100 rounded-full transition-colors"
+                className="absolute top-4 left-4 p-2 text-pink-500 hover:text-pink-700 hover:bg-pink-100 rounded-full transition-colors z-20"
                 title="Flip back"
               >
                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
@@ -139,7 +145,7 @@ export default function Home() {
 
               <button 
                 onClick={(e) => {
-                  e.stopPropagation(); // Stop bubble so we don't flip, just reset
+                  e.stopPropagation();
                   handleReset();
                 }}
                 className="bg-red-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-red-600 hover:scale-105 transition-all animate-bounce"
