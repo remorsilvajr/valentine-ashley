@@ -14,9 +14,10 @@ export default function Home() {
   const [noCount, setNoCount] = useState(0);
   const [yesPressed, setYesPressed] = useState(false);
   const [hearts, setHearts] = useState<Heart[]>([]);
-  
-  // Track the exact scale of the Yes button
   const [yesScale, setYesScale] = useState(1);
+  
+  // NEW: Track if the card is flipped
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -48,6 +49,14 @@ export default function Home() {
     });
   }
 
+  // NEW: Reset everything to start over
+  function handleReset() {
+    setIsFlipped(false);
+    setYesPressed(false);
+    setNoCount(0);
+    setYesScale(1);
+  }
+
   const noButtonOffset = (yesScale - 1) * 80;
 
   // ---------------------------------------------------------
@@ -71,8 +80,6 @@ export default function Home() {
            </div>
         ))}
 
-        {/* FIXED: We separated the text and the emoji. 
-            The text gets the gradient, the emoji stays normal. */}
         <h1 className="text-6xl font-bold mb-4 drop-shadow-sm animate-pulse py-4">
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-600 to-red-500">
             Yeeeeeeyy!!!
@@ -84,22 +91,66 @@ export default function Home() {
           Thank you, babyyyy. I love you so muchhh :3
         </h2>
 
-        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-lg border-2 border-pink-200 z-10 transform hover:scale-105 transition-transform duration-300">
-          <p className="text-gray-700 text-lg leading-relaxed text-left font-medium">
-            Dear <strong>Ashley Silva My Baby</strong>,
-            <br /><br />
-            This is our 2nd Valentine&apos;s na baby and I&apos;m so glad na we&apos;re still going strong japun hehe. 
-            I hope this would be a good year and I really want to be with you najud :( 
-            Pero 3 months nalang man sad so laban HAHAHAHA. 
-            <br /><br />
-            I love you so much my cutie baby, my sweetie pie honey bunch sugarplum humpty humpty dum {'>'}-{'<'}
-          </p>
+        {/* 3D FLIP CONTAINER */}
+        <div className="relative w-full max-w-lg cursor-pointer [perspective:1000px] z-10" onClick={() => setIsFlipped(!isFlipped)}>
           
-          <div className="mt-8 pt-6 border-t border-pink-100">
-            <p className="font-bold text-pink-500">From the love of your life</p>
-            <p className="text-gray-500">- Remor Silva Jr (Your Baby)</p>
+          {/* FLIPPER */}
+          <div className={`relative w-full h-full transition-all duration-700 [transform-style:preserve-3d] ${isFlipped ? "[transform:rotateY(180deg)]" : ""}`}>
+            
+            {/* FRONT FACE (Letter) */}
+            <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border-2 border-pink-200 [backface-visibility:hidden]">
+              <p className="text-gray-700 text-lg leading-relaxed text-left font-medium">
+                Dear <strong>Ashley Silva My Baby</strong>,
+                <br /><br />
+                This is our 2nd Valentine&apos;s na baby and I&apos;m so glad na we&apos;re still going strong japun hehe. 
+                I hope this would be a good year and I really want to be with you najud :( 
+                Pero 3 months nalang man sad so laban HAHAHAHA. 
+                <br /><br />
+                I love you so much my cutie baby, my sweetie pie honey bunch sugarplum humpty humpty dum {'>'}-{'<'}
+              </p>
+              
+              <div className="mt-8 pt-6 border-t border-pink-100 text-left">
+                <p className="font-bold text-pink-500">From the love of your life</p>
+                <p className="text-gray-500">- Remor Silva Jr (Your Baby)</p>
+                <p className="text-xs text-pink-300 mt-4 italic text-center">(Click card to flip)</p>
+              </div>
+            </div>
+
+            {/* BACK FACE (Reset Option) */}
+            <div className="absolute inset-0 h-full w-full bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border-2 border-pink-200 [transform:rotateY(180deg)] [backface-visibility:hidden] flex flex-col items-center justify-center">
+              
+              {/* Return Icon (Top Left) */}
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation(); // Stop the card from flipping back when clicking the icon
+                  setIsFlipped(false);
+                }}
+                className="absolute top-4 left-4 p-2 text-pink-500 hover:text-pink-700 hover:bg-pink-100 rounded-full transition-colors"
+                title="Flip back"
+              >
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                </svg>
+              </button>
+
+              <p className="text-xl font-bold text-pink-600 mb-6 text-center">
+                Just in case ganahan ka mubalik sa first page hehe
+              </p>
+
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation(); // Stop bubble so we don't flip, just reset
+                  handleReset();
+                }}
+                className="bg-red-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-red-600 hover:scale-105 transition-all animate-bounce"
+              >
+                Go back to start 🔄
+              </button>
+            </div>
+
           </div>
         </div>
+
       </main>
     );
   }
